@@ -1,0 +1,31 @@
+# version: '3'
+
+# services:
+#   db:
+#     image: postgres:15.3
+#     restart: always
+#     ports:
+#       - '5432:5432'
+#     environment:
+#       POSTGRES_PASSWORD: ${DB_PASSWORD}
+#       POSTGRES_DB: ${DB_NAME}
+#       PGDATA: /var/lib/postgresql/data/pgdata
+#     container_name: trainingdb
+#     volumes:
+#       - ./postgres_data:/var/lib/postgresql
+
+version: '3'
+
+services:
+  db:
+    image: postgres:15.3
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    container_name: trainingdb
+    volumes:
+      - ./postgres_data:/var/lib/postgresql
