@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { SaleDetail } from 'src/sale/entities/sale-detail.entity';
 
 @Entity()
 export class Product {
@@ -23,7 +22,4 @@ export class Product {
 
   @Column('int', { default: 0 })
   stock: number;
-
-  @OneToMany(() => SaleDetail, (saleDetail) => saleDetail.product)
-  saleDetails: SaleDetail[];
 }

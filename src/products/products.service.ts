@@ -13,8 +13,6 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
-import { Sale } from '../sale/entities/sale.entity';
-import { SaleDetail } from '../sale/entities/sale-detail.entity';
 
 @Injectable()
 export class ProductsService {
@@ -27,7 +25,7 @@ export class ProductsService {
 
   async create(createProductDto: CreateProductDto) {
     try {
-      const product = this.productRepository.create(createProductDto);
+      const product = this.productRepository.create(createProductDto); //Solo se crea la instancia del producto con las propiedades
       await this.productRepository.save(product);
 
       return product;
@@ -36,6 +34,7 @@ export class ProductsService {
     }
   }
 
+  //Todo: paginar
   findAll(paginationDto: PaginationDto): Promise<Product[]> {
     const {
       limit = 10,
@@ -73,29 +72,30 @@ export class ProductsService {
     let product: Product;
 
     if (isUUID(term)) {
-      product = await this.productRepository.findOne({ id: term });
+      product = await this.productRepository.findOneBy({ id: term });
     } else {
       const queryBuilder = this.productRepository.createQueryBuilder();
       product = await queryBuilder
-        .where('UPPER(code) = :code OR UPPER(name) = :name', {
+        .where('UPPER(code) =:code or UPPER(name) =:name', {
           code: term,
           name: term.toUpperCase(),
         })
         .getOne();
     }
 
-    if (!product) throw new NotFoundException(`Product with ${term} not found`);
+    if (!product) throw new NotFoundException(`Product with ${term} not found`); //Par evaluar si un id se encuentra
     return product;
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
+    //Preparar para la actualizacion
     const product = await this.productRepository.preload({
       id: id,
       ...updateProductDto,
     });
 
     if (!product)
-      throw new NotFoundException(`Product with id: ${id} not found`);
+      throw new NotFoundException(`Product with id: ${id} no found`);
 
     try {
       await this.productRepository.save(product);
@@ -115,21 +115,9 @@ export class ProductsService {
     if (error.code === '23505') throw new BadRequestException(error.detail);
 
     this.logger.error(error);
+    //console.log(error);
     throw new InternalServerErrorException(
-      'Unexpected error, check server log',
+      'Unexpected error,  check server log',
     );
-  }
-
-  async calculateSale(sale: Sale): Promise<number> {
-    let total = 0;
-
-    for (const saleDetail of sale.details) {
-      const subtotal = saleDetail.totalPrice;
-      const discount = saleDetail.discount;
-
-      total += subtotal - (subtotal * discount) / 100;
-    }
-
-    return total;
   }
 }
