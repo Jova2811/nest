@@ -15,12 +15,12 @@ export class PaginationDto {
   @IsOptional()
   @Type(() => Number)
   @IsPositive()
-  precioMin?: number;
+  minPrice?: number;
 
   @IsOptional()
   @Type(() => Number)
   @IsPositive()
-  precioMax?: number;
+  maxPrice?: number;
 
   @IsOptional()
   orderBy?: string;

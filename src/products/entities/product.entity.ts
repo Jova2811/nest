@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { SaleDetail } from 'src/sale/entities/sale-detail.entity';
 
 @Entity()
 export class Product {
@@ -6,20 +7,23 @@ export class Product {
   id: string;
 
   @Column({ unique: true })
-  clave: string;
+  code: string;
 
   @Column()
-  nombre: string;
+  name: string;
 
   @Column({ type: 'text', nullable: true })
-  descripcion: string;
+  description: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  precioVenta: number;
+  salePrice: number;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  costoCompra: number;
+  purchaseCost: number;
 
   @Column('int', { default: 0 })
-  existencia: number;
+  stock: number;
+
+  @OneToMany(() => SaleDetail, (saleDetail) => saleDetail.product)
+  saleDetails: SaleDetail[];
 }

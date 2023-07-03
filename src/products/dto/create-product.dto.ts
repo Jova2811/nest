@@ -1,31 +1,36 @@
 import {
+  IsNotEmpty,
   IsNumber,
   IsPositive,
   IsString,
   MinLength,
-  IsInt,
 } from 'class-validator';
 
 export class CreateProductDto {
   @IsString()
-  @MinLength(1) //Minimo un caracter
-  nombre: string;
-
-  @IsNumber()
-  @IsPositive()
-  clave: string;
+  @MinLength(1)
+  name: string;
 
   @IsString()
-  descripcion: string;
+  @MinLength(1)
+  code: string;
+
+  @IsString()
+  description: string;
 
   @IsNumber()
   @IsPositive()
-  precioVenta: number;
+  salePrice: number;
 
   @IsNumber()
-  costoCompra: number;
-
-  @IsInt()
   @IsPositive()
-  existencia: number;
+  purchaseCost: number;
+
+  @IsNumber()
+  @IsPositive()
+  stock: number;
+
+  @IsNumber()
+  @IsPositive()
+  quantity: number;
 }

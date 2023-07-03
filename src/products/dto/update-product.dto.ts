@@ -3,25 +3,25 @@ import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 export class UpdateProductDto {
   @IsOptional()
   @IsNotEmpty()
-  clave?: string;
+  code?: string;
 
   @IsOptional()
   @IsNotEmpty()
-  nombre?: string;
+  name?: string;
 
   @IsOptional()
   @IsNotEmpty()
-  descripcion?: string;
+  description?: string;
 
   @IsOptional()
   @IsNumber()
-  precioVenta?: number;
+  salePrice?: number;
 
   @IsOptional()
   @IsNumber()
-  costoCompra?: number;
+  purchaseCost?: number;
 
   @IsOptional()
   @IsNumber()
-  existencia?: number;
+  stock?: number;
 }

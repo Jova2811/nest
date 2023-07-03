@@ -23,6 +23,15 @@ export class ProductsService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
+  async findByIds(ids: string[]): Promise<Product[]> {
+    return this.productRepository.findByIds(ids);
+  }
+
+  calculateSalePrice(purchaseCost: number, profitPercentage: number): number {
+    const markup = 1 + profitPercentage / 100;
+    return purchaseCost * markup;
+  }
+
   async create(createProductDto: CreateProductDto) {
     try {
       const product = this.productRepository.create(createProductDto); //Solo se crea la instancia del producto con las propiedades
@@ -35,24 +44,24 @@ export class ProductsService {
   }
 
   //Todo: paginar
-  findAll(paginationDto: PaginationDto) {
+  findAll(paginationDto: PaginationDto): Promise<Product[]> {
     const {
       limit = 10,
       offset = 0,
-      precioMin,
-      precioMax,
+      minPrice,
+      maxPrice,
       orderBy,
       order,
     } = paginationDto;
 
     const where: any = {};
 
-    if (precioMin && precioMax) {
-      where.precioVenta = Between(precioMin, precioMax);
-    } else if (precioMin) {
-      where.precioVenta = Between(precioMin, Infinity);
-    } else if (precioMax) {
-      where.precioVenta = Between(0, precioMax);
+    if (minPrice && maxPrice) {
+      where.salePrice = Between(minPrice, maxPrice);
+    } else if (minPrice) {
+      where.salePrice = Between(minPrice, Infinity);
+    } else if (maxPrice) {
+      where.salePrice = Between(0, maxPrice);
     }
 
     const orderOptions: any = {};
@@ -66,13 +75,6 @@ export class ProductsService {
       skip: offset,
       order: orderOptions,
     });
-    // const { limit = 10, offset = 0 } = paginationDto;
-
-    // return this.productRepository.find({
-    //   take: limit,
-    //   skip: offset,
-    //   //Todo: relaciones
-    // });
   }
 
   async findOne(term: string) {
@@ -83,9 +85,9 @@ export class ProductsService {
     } else {
       const queryBuilder = this.productRepository.createQueryBuilder();
       product = await queryBuilder
-        .where('UPPER(clave) =:clave or UPPER(nombre) =:nombre', {
-          clave: term,
-          nombre: term.toUpperCase(),
+        .where('UPPER(code) =:code or UPPER(name) =:name', {
+          code: term,
+          name: term.toUpperCase(),
         })
         .getOne();
     }
